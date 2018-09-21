@@ -35,24 +35,19 @@ const getAlbumsByGenre = genre => pipe(
 )(`tell application "iTunes" to get album of every track of playlist "Library" where genre is equal to "${genre}"`)
 
 const getPlaylistsInFolder = folder => pipe(
-  runCommand
+  runCommand,
+  commaSplit
 )(getFolderPlaylistsScript(folder))
 
-const getSongsInPlaylist = playlist => pipe(
-  runCommand,
-  console.log,
-  commaSplit,
-  uniq,
-)(`tell application "iTunes" to get the {id, name, artist, album} of every track of playlist "${playlist}"`)
-
-const setSongGenre = (songId, genre) => runCommand(`tell application "iTunes" to set genre of the track whose id is equal to "${songId}" to "${genre}"`)
+const setPlaylistGenre = playlist => runCommand(`tell application "iTunes" to set genre of every track in playlist "${playlist}" to "${playlist}"`)
 
 const setAlbumGenre = (album, genre) => runCommand(`tell application "iTunes" to set genre of every track where album is equal to "${album}" to "${genre}"`)
 
 function main() {
-  const songIds = getSongsInPlaylist('Chill')
-  console.log(songIds)
-  songIds.forEach(id => setSongGenre(id, 'Chill'))
+  const genrePlaylists = getPlaylistsInFolder('1. Genres')
+  genrePlaylists.forEach(setPlaylistGenre)
+  setPlaylistGenre('Uncategorized')
+  setPlaylistGenre('Undetermined')
 }
 
 main()
