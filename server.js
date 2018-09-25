@@ -9,7 +9,6 @@ const commaSplit = string => split(string, '<NEXT>')
 const splitUniq = pipe(commaSplit, uniq)
 
 const getFolderPlaylistsScript = playlist => `
-tell application "iTunes"
   set myList to {}
 	set myFolder to folder playlist "${playlist}"
 
@@ -19,8 +18,7 @@ tell application "iTunes"
 			if aPlaylist's parent = myFolder then set end of myList to aPlaylist's name
 		end try
 	end repeat
-end tell
-return myList
+return myList as text
 `
 
 const getGenres = () => pipe(
@@ -36,7 +34,7 @@ const getAlbumsByGenre = genre => pipe(
 )(`tell application "iTunes" to get album of every track of playlist "Library" where genre is equal to "${genre}"`)
 
 const getPlaylistsInFolder = folder => pipe(
-  runCommand,
+  cmd,
   commaSplit
 )(getFolderPlaylistsScript(folder))
 
@@ -65,15 +63,15 @@ function main() {
     const count = getAlbumTrackCount(album)
     const totalTracks = getAlbumTracks(album).length
 
-    console.log(`Album: ${album}.\tCount: ${count}.\tActual: ${totalTracks}.`)
+    // console.log(`Album: ${album}.\tCount: ${count}.\tActual: ${totalTracks}.`)
 
     if (count == 0) {
-      addAlbumToPlaylist(album, 'No Track Count')
+      // addAlbumToPlaylist(album, 'No Track Count')
       return
     }
 
     if (totalTracks > count) {
-      addAlbumToPlaylist(album, 'Too Many Tracks')
+      // addAlbumToPlaylist(album, 'Too Many Tracks')
       return
     }
 
@@ -81,13 +79,11 @@ function main() {
       addAlbumToPlaylist(album, 'Full Albums')
     }
   })
-  // console.log(getAlbumTracks('Revelations'))
-  // console.log(getAlbumTrackCount('Revelations'))
-  // addAlbumToPlaylist('Revelations', 'Full Albums')
-  // const genrePlaylists = getPlaylistsInFolder('1. Genres')
-  // genrePlaylists.forEach(setPlaylistGenre)
-  // setPlaylistGenre('Uncategorized')
-  // setPlaylistGenre('Undetermined'
+
+  const genrePlaylists = getPlaylistsInFolder('1. Genres')
+  genrePlaylists.forEach(setPlaylistGenre)
+  setPlaylistGenre('Uncategorized')
+  setPlaylistGenre('Undetermined')
 }
 
 main()
