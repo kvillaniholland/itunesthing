@@ -1,5 +1,5 @@
-import {cmd, getFolderPlaylistsScript} from './itunes.mjs'
-import {pipe, splitUniq, splitResponse} from './utils.mjs'
+import {cmd, getFolderPlaylistsScript} from './itunes'
+import {pipe, splitUniq, splitResponse} from './utils'
 
 const getGenres = () => pipe(
     cmd,

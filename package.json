@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "go": "node --experimental-modules index.mjs"
+    "go": "node -r esm index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "applescript": "^1.0.0",
+    "esm": "^3.0.84",
     "run-applescript": "^3.2.0"
   }
 }

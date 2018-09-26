@@ -1,4 +1,4 @@
-import {addAlbumToPlaylist, getPlaylistAlbums, getAlbumTrackCount, getAlbumTracks, getPlaylistsInFolder, setPlaylistGenre} from './music.mjs'
+import {addAlbumToPlaylist, getPlaylistAlbums, getAlbumTrackCount, getAlbumTracks, getPlaylistsInFolder, setPlaylistGenre} from './music'
 
 const dealWithTrackCounts = (count, album) => {
   if (count == 0) {
@@ -17,7 +17,6 @@ function main() {
   albums.forEach(album => {
     const count = getAlbumTrackCount(album)
     const totalTracks = getAlbumTracks(album).length
-
 
     if (totalTracks == count) {
       addAlbumToPlaylist(album, 'Full Albums')
