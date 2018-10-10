@@ -12,6 +12,7 @@
   "dependencies": {
     "applescript": "^1.0.0",
     "esm": "^3.0.84",
+    "fandy": "^1.0.4",
     "run-applescript": "^3.2.0"
   }
 }

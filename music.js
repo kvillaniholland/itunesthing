@@ -1,5 +1,6 @@
+import {pipe, zip} from 'fandy'
 import {cmd, getFolderPlaylistsScript} from './itunes'
-import {pipe, splitUniq, splitResponse, zipArrays} from './utils'
+import {splitUniq, splitResponse} from './utils'
 
 const getGenres = () => pipe(
   cmd,
@@ -36,8 +37,10 @@ export const getAlbumTrackCount = album => cmd(`get track count of first track w
 export const addAlbumToPlaylist = (album, playlist) => cmd(`duplicate (every track where album is equal to "${album}") to user playlist "${playlist}"`)
 
 export const getPlaylistTracks = playlist => {
-  const names = splitUniq(cmd(`set theTracks to get name of (every track of playlist "${playlist}") as text`))
+  const names = splitResponse(cmd(`set theTracks to get name of (every track of playlist "${playlist}") as text`))
   const artists = splitResponse(cmd(`set theTracks to get artist of (every track of playlist "${playlist}") as text`))
-  const objects = zipArrays(names, artists, ['name', 'artist'])
+  const albums = splitResponse(cmd(`set theTracks to get album of (every track of playlist "${playlist}") as text`))
+  const times = splitResponse(cmd(`set theTracks to get time of (every track of playlist "${playlist}") as text`))
+  const objects = zip(['name', 'artist', 'album', 'time'], names, artists, albums, times)
   return objects
 }
