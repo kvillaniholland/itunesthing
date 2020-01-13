@@ -1,6 +1,7 @@
 import {pipe, zip} from 'fandy'
 import {cmd, getFolderPlaylistsScript} from './itunes'
 import {splitUniq, splitResponse} from './utils'
+import escape from 'escape-string-applescript';
 
 const getGenres = () => pipe(
   cmd,
@@ -28,13 +29,16 @@ export const getPlaylistAlbums = playlist => pipe(
 )(`set theAlbums to get album of every track of user playlist "${playlist}" as text`)
 
 export const getAlbumTracks = album => pipe(
+  album => `set theTracks to get name of (every track of playlist "Library" where album is equal to "${album}") as text`,
   cmd,
   splitUniq
-)(`set theTracks to get name of (every track of playlist "Library" where album is equal to "${album}") as text`)
+)(escape(album))
 
-export const getAlbumTrackCount = album => cmd(`get track count of first track where album is equal to "${album}"`)
+export const getAlbumTrackCount = album => cmd(`get track count of first track where album is equal to "${escape(album)}"`)
 
-export const addAlbumToPlaylist = (album, playlist) => cmd(`duplicate (every track where album is equal to "${album}") to user playlist "${playlist}"`)
+export const addAlbumToPlaylist = (album, playlist) => cmd(`duplicate (every track where album is equal to "${escape(album)}") to user playlist "${playlist}"`)
+
+export const emptyPlaylist = playlist => cmd(`delete tracks of playlist "${playlist}"`)
 
 export const getPlaylistTracks = playlist => {
   const names = splitResponse(cmd(`set theTracks to get name of (every track of playlist "${playlist}") as text`))
@@ -42,5 +46,15 @@ export const getPlaylistTracks = playlist => {
   const albums = splitResponse(cmd(`set theTracks to get album of (every track of playlist "${playlist}") as text`))
   const times = splitResponse(cmd(`set theTracks to get time of (every track of playlist "${playlist}") as text`))
   const objects = zip(['name', 'artist', 'album', 'time'], names, artists, albums, times)
+  return objects
+}
+
+export const getDetailedAlbumTracks = album => {
+  const names = splitResponse(cmd(`set theTracks to get name of (every track of playlist "Library" where album is equal to "${album}") as text`))
+  const artists = splitResponse(cmd(`set theTracks to get artist of (every track of playlist "Library" where album is equal to "${album}") as text`))
+  const albums = splitResponse(cmd(`set theTracks to get album of (every track of playlist "Library" where album is equal to "${album}") as text`))
+  const times = splitResponse(cmd(`set theTracks to get time of (every track of playlist "Library" where album is equal to "${album}") as text`))
+  const loved = splitResponse(cmd(`set theTracks to get loved of (every track of playlist "Library" where album is equal to "${album}") as text`))
+  const objects = zip(['name', 'artist', 'album', 'time', 'loved'], names, artists, albums, times, loved)
   return objects
 }
